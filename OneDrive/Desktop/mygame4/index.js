@@ -1,4 +1,4 @@
-const canvas= document.querySelector('canvas')
+const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
 canvas.width = 64 * 16
@@ -125,24 +125,6 @@ class Player extends Sprite{
     }
 
 }
-
-handleInput(keys)
-    if(this.preventInput) return
-    this.velocity.x = 0
-    if(keys.d.pressed){
-        this.switchSprite('runRight')
-        this.velocity.x = 5
-        this.lastDirection = 'right'
-    }else if (keys.a.pressed) {
-        this.switchSprite('runLeft')
-        this.velocity.x =-5
-        this.lastDirection = 'left'
-    } else{
-        if(this.lastDirection === 'left')this.switchSprite('idleLeft')
-        else this.switchSprite('idleRight')
-    }
-
-
 const player = new Player({
     imageSrc:'Sprites/01-King Human/Idle (78x58).png',
     frameRate: 11,
