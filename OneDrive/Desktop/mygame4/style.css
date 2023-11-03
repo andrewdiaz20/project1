@@ -1,8 +1,32 @@
 body {
-    margin-top: 1em;
+    margin-top: 10vh;
     padding-left: auto;
     padding-right: auto;
-    margin-left: 10em;
-    margin-right: 10em;
+    margin-left: 45vh;
+    margin-right: 10vh;
     width: 800px;
+}
+.decor{
+    color: red;
+}
+.startbutton {
+    color: cyan;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    margin-left: 77vh;
+    margin-top: 20vh;
+}
+.gameover{
+    color: cyan;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    margin-left: 55vh;
+    margin-top: 20vh;
+    flex-wrap: wrap;
+    align-content: center;
+}
+header{
+    font-size: 30px;
 }

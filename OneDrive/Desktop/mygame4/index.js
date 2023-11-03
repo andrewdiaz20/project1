@@ -4,47 +4,34 @@ const c = canvas.getContext('2d')
 canvas.width = 64 * 16
 canvas.height = 64 * 9
 
+//blueprint of sprite//
+var myMusic;
+
+const audioObj = new Audio("dungeon.ogg");
+
+audioObj.play();
+
 
 class Sprite{
-    constructor({
-        position, 
-        imageSrc, 
-        frameRate= 1, 
-        animations, 
-        frameBuffer = 2,
-        loop = true,
-        autoplay = true,
-    }) {
+    constructor({position, imageSrc, frameRate = 1}){
         this.position = position
         this.image = new Image()
-        this.image.onload = () => {
+        this.image.onload =() =>{
             this.loaded = true
             this.width = this.image.width / this.frameRate
             this.height = this.image.height
         }
-        this.image.src = imageSrc
+        this.image.src= imageSrc
         this.loaded = false
         this.frameRate = frameRate
         this.currentFrame = 0
         this.elapsedFrames = 0
-        this.frameBuffer = frameBuffer
-        this.animations = this.animations
-        this.loop = loop
-        this.autoplay = autoplay
-
-        if (this.animations){
-            for(let key in this.animations){
-                const image = new Image()
-                image.src = this.animations[key].imageSrc
-                this.animations[key].image = image
-            }
-            console.log(this.animations)
-        }
+        this.frameBuffer = 2
     }
     draw(){
         if(!this.loaded)return
         const cropbox = {
-            position: {
+            position:{
                 x: this.width * this.currentFrame,
                 y:0,
             },
@@ -52,129 +39,62 @@ class Sprite{
             height: this.height,
         }
         c.drawImage(
-            this.image, 
-            cropbox.position.x, 
-            cropbox.position.y, 
-            cropbox.width, 
-            cropbox.height, 
-            this.position.x, 
-            this.position.y,
-            this.width,
-            this.height
-        )
+             this.image,
+             cropbox.position.x, 
+             cropbox.position.y, 
+             cropbox.width, 
+             cropbox.height,
+             this.position.x, 
+             this.position.y,
+             this.width,
+             this.height
+            )
 
-         this.updateFrames()
+            this.updateFrames()
+    }
+    updateFrames(){
+        this.elapsedFrames++
+
+        if(this.elapsedFrames % this.frameBuffer === 0 ){
+        if (this.currentFrame < this.frameRate - 1)this.currentFrame++
+        else this.currentFrame = 0
         }
-
-        play(){
-            this.autoplay = true
-        }
-
-        updateFrames(){
-            if(!this.autoplay) return
-
-            this.elapsedFrames++
-
-
-            if(this.elapsedFrames % this.frameBuffer === 0)
-            if(this.currentFrame < this.frameRate - 1) this.currentFrame++
-              else if(this.loop) this.currentFrame = 0
     }
 }
 
+
+//player blueprint//
+//physics blueprint//
 class Player extends Sprite{
-    constructor({ imageSrc, frameRate, animations}){
-        super({imageSrc, frameRate, animations})
+    constructor({imageSrc, frameRate}){
+        super({imageSrc, frameRate})
         this.position = {
-            x:100,
-            y:100
+            x: 100,
+            y: 100,
         }
-    
-        this.velocity ={
+        this.velocity = {
             x:0,
             y:0,
         }
-
-        this.sides = {
+        this.sides ={
             bottom: this.position.y + this.height
         }
         this.gravity = 1
     }
-
     update(){
-        //c.fillStyle = 'rgba(0,0,225,0.5)'
-        //c.fillRect(this.position.x, this.position.y, this.width, this.height)
-        this.hitbox = {
-            position:{
-                x: this.position.x,
-                y: this.position.y 
-            },
-            width: 50,
-            height: 50,
-        }
-
         this.position.x += this.velocity.x
+
         this.position.y += this.velocity.y
-        this.sides.bottom = this.position.y + this.height 
+        this.sides.bottom = this.position.y + this.height
 
-        //above bottom of canvas
         if(this.sides.bottom + this.velocity.y < canvas.height){
-            this.velocity.y += this.gravity 
-        } else this.velocity.y = 0
-        
+            this.velocity.y += this.gravity
+        }else this.velocity.y = 0
     }
-
 }
-const player = new Player({
-    imageSrc:'Sprites/01-King Human/Idle (78x58).png',
-    frameRate: 11,
-    animations: {
-        idleRight:{
-            frameRate: 11,
-            frameBuffer: 2,
-            loop:true,
-            imageSrc:'Sprites/01-King Human/Idle (78x58).png',
-        },
-        idleLeft:{
-            frameRate: 11,
-            frameBuffer: 2,
-            loop: true,
-            imageSrc:'Sprites/01-King Human/Idle (78x58).png',
-        },
-        runLeft:{
-            frameRate: 8,
-            frameBuffer: 2,
-            loop: true,
-            imageSrc: 'Sprites/01-King Human/Run (78x58).png',
-        },
-        runRight:{
-            frameRate: 8,
-            frameBuffer: 2,
-            loop: true,
-            imageSrc: 'Sprites/01-King Human/Run (78x58).png',
-        },
-        enterDoor:{
-            frameRate: 8,
-            frameBuffer: 4,
-            loop: false,
-            imageSrc:'Sprites/01-King Human/Door In (78x58).png'
-        }
-    }
-})
-const doors =[
-    new Sprite({
-        position:{
-            x: 800,
-            y: 507,
-        },
-        imageSrc:'Sprites/11-Door/Opening (46x56).png',
-        frameRate:5,
-        frameBuffer:5,
-        loop: false,
-        autoplay: false,
-    }),
-]
 
+
+//stored background image//
 const backgroundLevel1 = new Sprite({
     position:{
         x:0,
@@ -183,78 +103,146 @@ const backgroundLevel1 = new Sprite({
     imageSrc: 'NightForest/Reference (2).png',
 })
 
+//stored player image//
+const player = new Player({
+    imageSrc:'Sprites/01-King Human/Idle (78x58).png',
+    frameRate: 11,
+})
+//stored tree images//
+const tree =[
+    new Sprite({
+        position:{
+            x:50,
+            y:378,
+        },
+        imageSrc:"PNG/winter_conifer_tree_3.png",
+    }),
+    new Sprite({
+        position:{
+            x:500,
+            y:357,
+        },
+        imageSrc:"PNG/birch_1.png",
+    }),
+    new Sprite({
+        position:{
+            x:700,
+            y:342,
+        },
+        imageSrc:'PNG/winter_conifer_tree_2.png',
+    }),
+]
+//stored npc images//
+const pig =[
+    new Sprite({
+        frameRate: 11,
+        position:{
+            x:560,
+            y:535,
+        },
+        imageSrc:'Sprites/03-Pig/Idle (34x28).png',
+    }),
+    new Sprite({
+        frameRate:9,
+        position:{
+            x:790,
+            y:535,
+        },
+        imageSrc:'Sprites/04-Pig Throwing a Box/Idle (26x30).png',
+    })
+]
+//stored box image//
 
-const keys ={
+//stored door image//
+const door =[
+    new Sprite({
+        position:{
+            x:665,
+            y:507,
+        },
+        imageSrc:'Sprites/11-Door/Idle.png',
+    }),
+]
+
+const box=[
+    new Sprite({
+        position:{
+            x:950,
+            y:546,
+        },
+        imageSrc:'Sprites/08-Box/Idle.png'
+    })
+]
+
+const keys = {
     w:{
         pressed: false,
     },
-    a: {
+    a:{
         pressed: false,
     },
     d:{
         pressed: false,
     },
-
 }
 
+
+//invoking images//
 function animate(){
     window.requestAnimationFrame(animate)
 
     backgroundLevel1.draw()
 
-    doors.forEach((door) => {
+    tree.forEach((tree) =>{
+        tree.draw()
+    })
+
+    pig.forEach((pig) =>{
+        pig.draw()
+    })
+
+    door.forEach((door) => {
         door.draw()
     })
-    player.handleInput(keys)
-    player.this
-    player.update()
 
+    box.forEach((box) => {
+        box.draw()
+    })
+
+
+    player.velocity.x = 0
+    if(keys.d.pressed) player.velocity.x = 5
+    else if (keys.a.pressed) player.velocity.x = -5
+    
+    player.draw()
+    player.update()
 }
 animate()
+//invoking images//
 
-window.addEventListener('keydown',(event)=>{
+//player movement//
+window.addEventListener('keydown', (event) => {
     switch(event.key){
-        case "w":
-            for(let i = 0; i < doors.length; i++){
-                const door = doors[i]
-
-                if(
-                    player.hitbox.position.x <= door.position.x + door.width &&
-                    player.hitbox.position.x + player.hitbox.width >= door.position.x &&
-                    player.hitbox.position.y + player.hitbox.height >= door.position.y &&
-                    player.hitbox.position.y <= door.position.y + door.height
-                ) {
-                    player.velocity.x = 0
-                    player.velocity.y = 0
-                    player.preventInput = true
-                    player.switchSprite('enterDoor')
-                    return
-                }    
-
-            }
-            if(player.velocity.y ===0)player.velocity.y = -20
-
+        case 'w':
+            if(player.velocity.y === 0) player.velocity.y = -20
+            
+            break
+        case'a':
+        keys.a.pressed = true
         break
-        case 'a':
-            keys.a.pressed = true
+        case'd':
+        keys.d.pressed = true
         break
-        case 'd':
-            keys.d.pressed = 4
-        break
-
     }
-
 })
-
-window.addEventListener('keyup',(event)=>{
+window.addEventListener('keyup', (event) => {
     switch(event.key){
-        case 'a':
-            keys.a.pressed = false
+        case'a':
+        keys.a.pressed = false
         break
-        case 'd':
-            keys.d.pressed = false
+        case'd':
+        keys.d.pressed = false
         break
-
     }
-
 })
+//player movement//
