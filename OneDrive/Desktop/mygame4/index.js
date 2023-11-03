@@ -61,7 +61,7 @@ class Sprite{
         }
     }
 }
-//physics blueprint//
+//physics/gravity blueprint//
 class Player extends Sprite{
     constructor({imageSrc, frameRate}){
         super({imageSrc, frameRate})
