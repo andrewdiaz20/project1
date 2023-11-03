@@ -30,3 +30,7 @@ body {
 header{
     font-size: 30px;
 }
+button{
+    color: red;
+    outline: red;
+}
