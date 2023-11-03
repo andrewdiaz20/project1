@@ -61,9 +61,6 @@ class Sprite{
         }
     }
 }
-
-
-//player blueprint//
 //physics blueprint//
 class Player extends Sprite{
     constructor({imageSrc, frameRate}){
@@ -92,6 +89,7 @@ class Player extends Sprite{
         }else this.velocity.y = 0
     }
 }
+
 
 
 //stored background image//
